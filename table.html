@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>table</title>
+
+    <style>
+
+        .form{
+            width:500px;
+        }
+
+        .form input{
+            width:100%;
+        }
+
+        table,td,th{
+            border:1px #ccc solid;
+        }
+
+        a{
+            padding:5px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="form">
+        <lable>标题</lable>
+        <input id="title"/>
+        <lable>内容</lable>
+        <input id="content"/>
+        <lable>作者</lable>
+        <input id="autr"/>
+        <button id="save" onclick="save()">save</button>
+    </div>
+
+    <table id="table">
+        <tr>
+            <th>ID</th>
+            <th>标题</th>
+            <th>内容</th>
+            <th>作者</th>
+            <th>发布时间</th>
+            <th>操作</th>
+        </tr>
+    </table>
+
+
+</body>
+
+<script>
+
+    var isAdd = true;
+    var updateNum = 0;
+
+function save(){
+    var title = document.getElementById("title").value;
+    var content = document.getElementById("content").value;
+    var autr = document.getElementById("autr").value;
+    var html = "";
+    if(isAdd){
+        var date = new Date("2017-9-1");
+
+        var time = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+
+        html = "\n" +
+            "        <tr>\n" +
+            "            <td>"+createID()+"</td>\n" +
+            "            <td>"+title+"</td>\n" +
+            "            <td>"+content+"</td>\n" +
+            "            <td>"+autr+"</td>\n" +
+            "            <td>"+time+"</td>\n" +
+            "            <td><a href='#'>详细信息</a><a href='#'>删除</a></td>\n" +
+            "        </tr>"
+
+
+        document.getElementById("table").innerHTML+=html;
+        clearForm();
+    }else{
+        var updateHtml = document.getElementById("table").getElementsByTagName("tr")[updateNum];
+        updateHtml.getElementsByTagName("td")[1].innerText = title;
+        updateHtml.getElementsByTagName("td")[2].innerText = content;
+        updateHtml.getElementsByTagName("td")[3].innerText = autr;
+
+        isAdd =true;
+        updateNum = 0;
+
+        clearForm();
+    }
+}
+
+
+
+function createID(){
+    var trs = document.getElementsByTagName("tr");
+
+    var oldId = trs[trs.length-1].innerText.split("\t")[0];
+
+    if(oldId=="ID"){
+        return 1;
+    }else{
+        return parseInt(oldId)+1;
+    }
+}
+
+var oUl = document.getElementById("table");
+oUl.onclick = function(ev){
+    var ev = ev || window.event;
+    var target = ev.target || ev.srcElement;
+    if(target.nodeName.toLowerCase() == 'a'){
+
+        if(ev.target.innerText=="详细信息"){
+            isAdd = false;//更新
+            var conts = ev.path[2].innerText.split("\t");
+            updateNum = ev.path[2].rowIndex;
+            document.getElementById("title").value = conts[1];
+            document.getElementById("content").value = conts[2];
+            document.getElementById("autr").value = conts[3];
+        }else{
+            ev.path[2].parentNode.removeChild(ev.path[2]);
+        }
+    }
+}
+
+
+
+function clearForm(){
+    document.getElementById("title").value = "";
+    document.getElementById("content").value = "";
+    document.getElementById("autr").value = "";
+}
+
+</script>
+
+</html>
